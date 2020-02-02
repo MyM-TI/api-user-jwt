@@ -112,7 +112,7 @@ api-user-jwt/
 2. Clona el repositorio
   
   ```
-  $ git clone https://github.com/<your-user>/api-user-jwt
+  $ git clone https://github.com/MyM-TI/api-user-jwt
   ```
   
 3. Navega a la carpeta
