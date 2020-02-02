@@ -1,0 +1,58 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+	<!-- Default config and other properties -->
+	<include
+		resource="org/springframework/boot/logging/logback/defaults.xml" />
+	<property name="LOG_FILE" value="./api-user-jwt.log" />
+
+	<!-- Profile independent loggers -->
+	<logger name="cl.mym.api.user.jwt"
+		level="DEBUG" />
+	<logger name="org.springframework" level="INFO" />
+	<logger
+		name="org.springframework.ws.client.core.WebServiceTemplate"
+		level="INFO" />
+	<logger name="org.springframework.web" level="DEBUG" />
+	<logger name="org.springframework.ws.client.MessageTracing.sent"
+		level="INFO" />
+	<logger
+		name="org.springframework.ws.client.MessageTracing.received"
+		level="INFO" />
+	<logger name="org.springframework.ws.server.MessageTracing"
+		level="INFO" />
+	<!-- Development profile -->
+	<springProfile name="local">
+		<appender name="APPENDER"
+			class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<pattern>[%d{yyyy-MM-dd HH:mm:ss}] %-5p [%C.%M] - %m%n
+				</pattern>
+				<charset>utf8</charset>
+			</encoder>
+		</appender>
+		<logger name="org.springframework.security" level="DEBUG" />
+	</springProfile>
+
+	<!-- Staging/production profile -->
+	<springProfile name="!local">
+		<appender name="APPENDER"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<encoder>
+				<pattern>[%d{dd/MM/yyyy HH:mm:ss,SSS}] [%C.%M] - %m%n
+				</pattern>
+			</encoder>
+			<file>${LOG_FILE}</file>
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+				<fileNamePattern>${LOG_FILE}.%d</fileNamePattern>
+				<maxHistory>20</maxHistory>
+			</rollingPolicy>
+		</appender>
+	</springProfile>
+
+	<root level="INFO">
+		<appender-ref ref="APPENDER" />
+	</root>
+
+</configuration>
