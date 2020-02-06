@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity findById(String userId) throws RecordNotFoundException {
 		UserEntity user = userRepository.findById(userId)
-				.orElseThrow(() -> new RecordNotFoundException("User id not found -" + userId));
+				.orElseThrow(() -> new RecordNotFoundException("User id not found " + userId));
 		return user;
 	}
 
@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
 		UserEntity userEntity = new UserEntity();
 		userEntity.setName(user.getName());
-		userEntity.setEmail(user.getEmail());
+		userEntity.setEmail(user.getEmail().toLowerCase());
 		userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
 		userEntity.getPhones().addAll(getPhonesUser(user));
 
@@ -90,11 +90,17 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity update(String userId, User user) throws RecordNotFoundException {
 		UserEntity userEntity = userRepository.findById(userId)
-				.orElseThrow(() -> new RecordNotFoundException("User id not found -" + userId));
-
+				.orElseThrow(() -> new RecordNotFoundException("User id not found " + userId));
+		if(user.getEmail() != null && !user.getEmail().isEmpty()) {
 		userEntity.setEmail(user.getEmail());
+		}
+		if(user.getName() != null && !user.getName().isEmpty()) {
 		userEntity.setName(user.getName());
+		}
+		
+		if (!passwordEncoder.matches(user.getPassword(), userEntity.getPassword())) {
 		userEntity.setPassword(passwordEncoder.encode(user.getPassword()));
+		}
 
 		return userRepository.save(userEntity);
 
@@ -103,9 +109,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String existsUserByEmailAndPassword(String email, String password) throws RecordNotFoundException {
 		UserEntity userEntity = userRepository.findByEmail(email)
-				.orElseThrow(() -> new RecordNotFoundException("User email not found -" + email));
+				.orElseThrow(() -> new RecordNotFoundException("credenciales incorrectas"));
 
+		if(!userEntity.getIsActive()) {
+			throw new RecordNotFoundException("usuario desabilitado");
+		}
+		
 		if (passwordEncoder.matches(password, userEntity.getPassword())) {
+			userEntity.setLastLogin(new Date());
+			userRepository.save(userEntity);
 			return jwtTokenProvider.createToken(email);
 		}
 
@@ -115,9 +127,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String delete(String userId) throws RecordNotFoundException {
 		UserEntity userEntity = userRepository.findById(userId)
-				.orElseThrow(() -> new RecordNotFoundException("User id not found -" + userId));
+				.orElseThrow(() -> new RecordNotFoundException("User id not found " + userId));
 		try {
-			userRepository.delete(userEntity);
+			userEntity.setIsActive(false);
+			userRepository.save(userEntity);
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -129,14 +142,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserEntity findByEmail(String email) throws RecordNotFoundException {
 		UserEntity user = userRepository.findByEmail(email)
-				.orElseThrow(() -> new RecordNotFoundException("User id not found -" + email));
+				.orElseThrow(() -> new RecordNotFoundException("User id not found " + email));
 		return user;
 	}
 	
 	@Override
 	public UserDetails loadUserByEmail(String email) throws RecordNotFoundException {
 		final UserEntity userEntity = userRepository.findByEmail(email)
-				.orElseThrow(() -> new RecordNotFoundException("User email not found -" + email));
+				.orElseThrow(() -> new RecordNotFoundException("User email not found " + email));
 
 		return org.springframework.security.core.userdetails.User//
 				.withUsername(userEntity.getEmail()).password(userEntity.getPassword()).authorities(new ArrayList<>())

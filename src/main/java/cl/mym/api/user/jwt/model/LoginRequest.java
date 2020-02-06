@@ -3,15 +3,18 @@ package cl.mym.api.user.jwt.model;
 import java.io.Serializable;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class LoginRequest implements Serializable {
 
 	private static final long serialVersionUID = -2609152578630482634L;
 
 	@NotBlank(message = "email es obligatorio")
+	@NotNull(message = "email es obligatorio")
 	private String email;
 
 	@NotBlank(message = "password es obligatorio")
+	@NotNull(message = "password es obligatorio")
 	private String password;
 
 	public String getEmail() {

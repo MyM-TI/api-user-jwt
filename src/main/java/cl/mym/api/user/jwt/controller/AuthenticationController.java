@@ -1,5 +1,7 @@
 package cl.mym.api.user.jwt.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,11 @@ public class AuthenticationController {
 	@Autowired(required = true)
 	private UserService userService;
 
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public ResponseEntity<JwtResponse> login(@RequestBody LoginRequest loginRequest) {
+	@RequestMapping(value = "/login/", method = RequestMethod.POST)
+	public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
 		String token = userService.existsUserByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
-		return new ResponseEntity<JwtResponse>(new JwtResponse(token), HttpStatus.OK);
+		JwtResponse jwtResponse = new JwtResponse(token);
+		return new ResponseEntity<JwtResponse>(jwtResponse, HttpStatus.OK);
 	}
 
 }

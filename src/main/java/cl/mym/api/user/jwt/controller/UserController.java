@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.hibernate.annotations.UpdateTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,7 @@ public class UserController {
 	}
 
 	@GetMapping("/users/{userId}")
-	public ResponseEntity<UserEntity> getUser(@PathVariable String userId) {
+	public ResponseEntity<UserEntity> getUser(@Valid @PathVariable String userId) {
 		log.info("init");
 		UserEntity user = userService.findById(userId);
 
@@ -55,11 +54,11 @@ public class UserController {
 		return new ResponseEntity<UserEntity>(user, HttpStatus.OK);
 	}
 
-	@PostMapping("/users")
+	@PostMapping("/users/")
 	@ResponseBody
 	public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
 		log.info("init");
-		if (userService.existsUserByEmail(user.getEmail())) {
+		if (userService.existsUserByEmail(user.getEmail().toLowerCase())) {
 			ResponseMessage responseMessage = new ResponseMessage("El correo ya registrado");
 			log.info("email user exist");
 			return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.UNPROCESSABLE_ENTITY);
@@ -70,30 +69,16 @@ public class UserController {
 		return new ResponseEntity<UserEntity>(userEntity, HttpStatus.OK);
 	}
 
-	@UpdateTimestamp
-	@ResponseBody
-	public ResponseEntity<?> updateUser(@Valid @RequestBody User user) {
-		log.info("init");
-		if (userService.existsUserByEmail(user.getEmail())) {
-			ResponseMessage responseMessage = new ResponseMessage("El correo ya registrado");
-			log.info("email user exist");
-			return new ResponseEntity<ResponseMessage>(responseMessage, HttpStatus.UNPROCESSABLE_ENTITY);
-		}
-		UserEntity userEntity = userService.save(user);
-		log.info("end");
-		log.debug("end result:" + userEntity);
-		return new ResponseEntity<UserEntity>(userEntity, HttpStatus.OK);
-	}
 
-	@PutMapping("/users/{userId}")
-	public ResponseEntity<?> updateUser(@PathVariable String userId, @Valid @RequestBody User user) {
+	@PutMapping("/users/{userId}/")
+	public ResponseEntity<?> updateUser(@Valid @PathVariable String userId, @Valid @RequestBody User user) {
 		log.info("init");
 		UserEntity userUpdate = userService.update(userId, user);
 		log.info("end");
 		return new ResponseEntity<UserEntity>(userUpdate, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/user/{userId}")
+	@DeleteMapping("/user/{userId}/")
 	public ResponseEntity<?> deleteUser(@PathVariable String userId) throws Exception {
 		log.info("init");
 		String message = userService.delete(userId);
