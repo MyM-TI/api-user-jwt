@@ -143,7 +143,7 @@ api-user-jwt/
 7. Realice una solicitud GET a `/api/users/` para verificar que no esta autenticado. Debería recibir una respuesta con un `401` con un mensaje `Acceso denegado` ya que aún no ha configurado su token JWT válido
 
   ```
-  $ curl -X GET http://localhost:8085/api-user-jwt/api/users
+  $ curl -X GET http://localhost:8085/api-user-jwt/api/users/
   ```
 
 8. Realice una solicitud POST a `/api/users/` para crear un usuario dentro de la api
