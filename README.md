@@ -133,7 +133,7 @@ api-user-jwt/
   $ gradle bootRun
   ```
 
-6. Navegue a `http://localhost:8085/swagger-ui.html` en su navegador para verificar que todo funciona correctamente. Puede cambiar la raíz de contexto o el puerto predeterminado en el siguiente archivo `application.properties`
+6. Navegue a `http://localhost:8085/api-user-jwt/swagger-ui.html` en su navegador para verificar que todo funciona correctamente. Puede cambiar la raíz de contexto o el puerto predeterminado en el siguiente archivo `application.properties`
 
   ```
   server.servlet.context-path=/api-user-jwt/
@@ -149,7 +149,7 @@ api-user-jwt/
 8. Realice una solicitud POST a `/api/users/` para crear un usuario dentro de la api
 
   ```
-  $ curl --location --request POST 'http://localhost:8085/api-user-jwt/api/users' \
+  $ curl --location --request POST 'http://localhost:8085/api-user-jwt/api/users/' \
 	--header 'Content-Type: application/json' \
 	--data-raw '{
 	    "email": "admin@admin.com",
@@ -168,7 +168,7 @@ api-user-jwt/
 9. Realice una solicitud POST a `/api/login` con el usuario `admin@admin.com` y la clave `Admin11` creado en el paso anterior para obtener un token JWT válido
 
   ```
-  $ curl --location --request POST 'http://localhost:8085/api-user-jwt/api/login' \
+  $ curl --location --request POST 'http://localhost:8085/api-user-jwt/api/login/' \
 	--header 'Content-Type: application/json' \
 	--data-raw '{
 	  "email": "admin@admin.com",
@@ -180,7 +180,7 @@ api-user-jwt/
 10. Agregue el JWT como parámetro de encabezado y vuelva a realizar la solicitud GET inicial a `/ api / users`
 
   ```
-  $ curl -X GET http://localhost:8085/api-user-jwt/api/users -H 'Authorization: Bearer <JWT_TOKEN>'
+  $ curl -X GET http://localhost:8085/api-user-jwt/api/users/ -H 'Authorization: Bearer <JWT_TOKEN>'
   ```
 
 10. Y eso es todo, felicidades! Debería obtener una respuesta similar a esta, lo que significa que ahora está autenticado
